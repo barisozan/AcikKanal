@@ -1,0 +1,32 @@
+import numpy as np
+from scipy.optimize import fsolve
+
+def equation_to_solve(h, Q, n, J, B):
+    return Q - (1 / n) * (((1 * h) / (1 + 2 * h)) ** (2/3)) * (J ** (1/2)) * (B * h)
+
+n = 0.017 # Beton
+J = 0.001 # Egim
+B = 2.5 # Acik kanal genisligi
+
+# Debi değerleri listesi
+Q_values = [1.062597,1.746111, 2.468611, 1.835694,2.041667,3.809167,4.248833]
+
+for Q in Q_values:
+    # Başlangıç h tahmin verisi
+    initial_guess = 0.1
+
+    # h degeri iterasyonu
+    h_solution = fsolve(equation_to_solve, initial_guess, args=(Q, n, J, B))
+    h = h_solution[0]
+
+    # V hesaplaması
+    V = Q / (B* h)
+
+    # V degerleri
+    min_V = 0.3  # Mın V
+    max_V = 1.0  # Max V
+
+    if min_V <= V <= max_V:
+        print(f"For Q = {Q}, h = {h}, V = {V} (V sınırlardadır)")
+    else:
+        print(f"For Q = {Q}, h = {h}, V = {V} (V sınırı aşmıştır)")
